@@ -78,26 +78,28 @@ class Warmer
 	 */
 	public function warm(): Promise
 	{
+		$_this = $this;
 		$client = new Client($this->guzzleConfig);
-		$requests = (function () use ($client) {
+		$requests = function () use ($client) {
 		    foreach ($this->urls as $url) {
-		    	yield (function() use ($url, $client) {
+		    	yield function() use ($url, $client, $_this) {
 		    		return $client->getAsync($url)->then(
-		            	(function (Response $response) use ($url) {
-		            		if ($this->observer) {
-		            			$this->observer->onFulfilled($response, $url);
+		            	function (Response $response) use ($url, $_this) {
+		            		if ($_this->observer) {
+		            			$_this->observer->onFulfilled($response, $url);
 		            		}
 		            		return $response;
-		            	})->bindTo($this),
-		            	(function (RequestException $reason) use ($url) {
-		            		if ($this->observer) {
-		            			$this->observer->onRejected($reason, $url);
+		            	},
+		            	function (RequestException $reason) use ($url, $_this) {
+		            		if ($_this->observer) {
+		            			$_this->observer->onRejected($reason, $url);
 		            		}
 		            		return $reason;
-		            	})->bindTo($this);
-		        })->bindTo($this);
+		            	}
+		        	);
+		    	};
 			}
-		})->bindTo($this);
+		};
 		$pool = new Pool($this->client, $requests(), [
     		'concurrency' => $this->concurrentRequests
 		]);
