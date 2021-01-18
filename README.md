@@ -1,4 +1,4 @@
-#Php Cache Warmer
+# Php Cache Warmer
 
 Simple php cache warmer, add urls or parse sitemap and visits all the urls asynchronously.
 You need to wait for the promise returned by the `warm` method to finish :
@@ -42,4 +42,4 @@ class MyObserver implements Observer
 $warmer = new Warmer(25, [], new MyObserver);
 ```
 
-Thanks to the great (vipnytt/sitemapparser)[https://github.com/VIPnytt/SitemapParser] sitemap parser :)
+Thanks to the great [vipnytt/sitemapparser](https://github.com/VIPnytt/SitemapParser) sitemap parser :)
