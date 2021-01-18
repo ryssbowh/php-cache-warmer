@@ -1,0 +1,30 @@
+{
+    "name": "ryssbowh/php-cache-warmer",
+    "description": "An asynchronous php cache warmer",
+    "keywords": [
+        "cache warmer"
+        "caching",
+        "guzzle"
+    ],
+    "support": {
+        "docs": "https://github.com/ryssbowh/php-cache-warmer/blob/master/README.md",
+        "issues": "https://github.com/ryssbowh/php-cache-warmer/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Boris Blondin"
+        }
+    ],
+    "require": {
+        "vipnytt/sitemapparser": "1.0",
+        "guzzle/guzzlehttp": ">=6",
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "Ryssbowh\\PhpCacheWarmer\\": "src/"
+        }
+    },
+	"minimum-stability": "stable"
+}
