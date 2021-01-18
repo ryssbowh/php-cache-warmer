@@ -2,7 +2,7 @@
     "name": "ryssbowh/php-cache-warmer",
     "description": "An asynchronous php cache warmer",
     "keywords": [
-        "cache warmer"
+        "cache warmer",
         "caching",
         "guzzle"
     ],
