@@ -4,13 +4,17 @@ Simple php cache warmer, add urls or parse sitemap and visits all the urls async
 You need to wait for the promise returned by the `warm` method to finish :
 
 ```
+use Ryssbowh\PhpCacheWarmer\Warmer;
+
 $warmer = new Warmer();
 $warmer->parseSitemap('http://mysite.com/sitemap.xml');
-$warmer->addUrl('http://othersite.com');
-$warmer->addUrls([
-	'http://othersite.com',
-	'http://othersite.com/hello'
-]);
+	->addUrl('http://othersite.com');
+	->addUrls([
+		'http://othersite.com',
+		'http://othersite.com/hello'
+	])
+	->ignoreUrl('http://mysite.com/page-maintenance')
+	->ignoreRegex('/http:\/\/mysite\.com\/forum*/')
 $promise = $warmer->warm();
 $promise->wait();
 ```
@@ -26,6 +30,9 @@ $warmer = new Warmer(25, ['headers' => [
 ```
 And subscribe an observer which will be called for every successful and failed requests :
 ```
+use Ryssbowh\PhpCacheWarmer\Warmer;
+use Ryssbowh\PhpCacheWarmer\Observer;
+
 class MyObserver implements Observer
 {
 	public function onFulfilled(Response $response, string $url)
