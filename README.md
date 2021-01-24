@@ -46,7 +46,7 @@ class MyObserver implements Observer
 {
 	public function onFulfilled(Response $response, string $url)
 	{
-		echo 'visited '.$url
+		echo 'visited '.$url;
 	}
 
 	public function onRejected(RequestException $reason, string $url)

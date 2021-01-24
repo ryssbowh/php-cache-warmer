@@ -70,27 +70,16 @@ class Warmer
 	/**
 	 * Add urls to be warmed
 	 * 
-	 * @param array $urls
+	 * @param string|array $urls
 	 * @return Warmer
 	 */
-	public function addUrls(array $urls): Warmer
+	public function addUrls($urls): Warmer
 	{
+		$urls = is_array($urls) ? $urls : [$urls];
 		foreach ($urls as $url) {
-			$this->addUrl($url);
-		}
-		return $this;
-	}
-
-	/**
-	 * Add url to be warmed
-	 * 
-	 * @param string $url
-	 * @return Warmer
-	 */
-	public function addUrl(string $url): Warmer
-	{
-		if (!$this->checkIgnoreUrls($url) and !$this->checkIgnoreRegex($url)) {
-			$this->urls[] = rtrim($url, '/');
+			if (!$this->checkIgnoreUrls($url) and !$this->checkIgnoreRegex($url)) {
+				$this->urls[] = rtrim($url, '/');
+			}
 		}
 		return $this;
 	}
