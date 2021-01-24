@@ -12,11 +12,29 @@ use vipnytt\SitemapParser;
 
 class Warmer
 {
+	/**
+	 * @var null|Observer
+	 */
 	protected $observer;
+	/**
+	 * @var int
+	 */
 	protected $concurrentRequests;
+	/**
+	 * @var array
+	 */
 	protected $guzzleConfig;
+	/**
+	 * @var array
+	 */
 	protected $urls = [];
+	/**
+	 * @var array
+	 */
 	protected $ignoreUrls = [];
+	/**
+	 * @var array
+	 */
 	protected $ignoreRegex = [];
 
 	/**
@@ -53,6 +71,7 @@ class Warmer
 	 * Add urls to be warmed
 	 * 
 	 * @param array $urls
+	 * @return Warmer
 	 */
 	public function addUrls(array $urls): Warmer
 	{
@@ -66,11 +85,12 @@ class Warmer
 	 * Add url to be warmed
 	 * 
 	 * @param string $url
+	 * @return Warmer
 	 */
 	public function addUrl(string $url): Warmer
 	{
 		if (!$this->checkIgnoreUrls($url) and !$this->checkIgnoreRegex($url)) {
-			$this->urls[] = $url;
+			$this->urls[] = rtrim($url, '/');
 		}
 		return $this;
 	}
@@ -86,26 +106,36 @@ class Warmer
 	}
 
 	/**
-	 * Ignore exact url
+	 * Ignore exact url(s)
 	 * 
-	 * @param  string $url
+	 * @param  string|array $url
+	 * @return Warmer
 	 */
-	public function ignoreUrl(string $url): Warmer
+	public function ignoreUrls($urls): Warmer
 	{
-		$this->ignoreUrls[] = $url;
-		$this->filterIgnoreUrls($url);
+		$urls = is_array($urls) ? $urls : [$urls];
+		foreach ($urls as $url) {
+			$url = rtrim($url, '/');
+			$this->ignoreUrls[] = $url;
+			$this->filterIgnoreUrls($url);
+		}
+		
 		return $this;
 	}
 
 	/**
 	 * Ignore by regex
 	 * 
-	 * @param  string $regex
+	 * @param  string|array $regexs
+	 * @return Warmer
 	 */
-	public function ignoreRegex(string $regex): Warmer
+	public function ignoreRegexs($regexs): Warmer
 	{
-		$this->ignoreUrls[] = $url;
-		$this->filterIgnoreRegex($regex);
+		$regexs = is_array($regexs) ? $regexs : [$regexs];
+		foreach ($regexs as $regex) {
+			$this->ignoreRegex[] = $regex;
+			$this->filterIgnoreRegex($regex);
+		}
 		return $this;
 	}
 
@@ -160,7 +190,7 @@ class Warmer
 	 * @param  string $url
 	 * @return bool is there a match
 	 */
-	public function checkIgnoreUrls(string $url): bool
+	protected function checkIgnoreUrls(string $url): bool
 	{
 		foreach ($this->ignoreUrls as $toIgnore) {
 			if ($toIgnore == $url) {

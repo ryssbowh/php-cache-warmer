@@ -7,16 +7,23 @@ You need to wait for the promise returned by the `warm` method to finish :
 use Ryssbowh\PhpCacheWarmer\Warmer;
 
 $warmer = new Warmer();
-$warmer->parseSitemap('http://mysite.com/sitemap.xml');
-	->addUrl('http://othersite.com');
+$warmer->parseSitemap('http://mysite.com/sitemap.xml')
+	->addUrls('http://othersite.com')
 	->addUrls([
-		'http://othersite.com',
+		'http://othersite.com/blog',
 		'http://othersite.com/hello'
 	])
-	->ignoreUrl('http://mysite.com/page-maintenance')
-	->ignoreRegex('/http:\/\/mysite\.com\/forum*/')
-$promise = $warmer->warm();
-$promise->wait();
+	->ignoreUrls('http://mysite.com/page-503')
+	->ignoreUrls([
+		'http://mysite.com/page-400',
+		'http://mysite.com/page-500'
+	])
+	->ignoreRegexs('/http:\/\/mysite\.com\/page*/')
+	->ignoreRegexs([
+		'/http:\/\/mysite\.com\/forum*/',
+		'/http:\/\/mysite\.com\/blog*/'
+	]);
+$warmer->warm()->wait();
 ```
 You can define the amount of concurrent requests (default 25) :
 ```
@@ -32,6 +39,8 @@ And subscribe an observer which will be called for every successful and failed r
 ```
 use Ryssbowh\PhpCacheWarmer\Warmer;
 use Ryssbowh\PhpCacheWarmer\Observer;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
 
 class MyObserver implements Observer
 {
